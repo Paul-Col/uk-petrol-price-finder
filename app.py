@@ -43,6 +43,11 @@ fuel_type = st.selectbox(
     ]
 )
 
+# Add a map option
+show_map = st.checkbox(
+    "Show stations on map",
+    value=True
+)
 # Match fuel type names
 fuel_codes = {
 
@@ -193,7 +198,17 @@ if st.button(
                         ),
 
                     "Price (p/l)":
-                        price
+                        price,
+
+                    "Latitude":
+                        station.get(
+                            "lat"
+                        ),
+
+                    "Longitude":
+                        station.get(
+                            "lon"
+                        )
                 }
             )
 
@@ -282,6 +297,41 @@ if st.button(
             f"**{cheapest['Price (p/l)']}p/litre**"
         )
 
+        # Show map
+        if show_map:
+
+            st.subheader(
+                "Petrol Station Map"
+            )
+
+            map_data = df[
+                [
+                    "Latitude",
+                    "Longitude"
+                ]
+            ].copy()
+
+            map_data = map_data.dropna()
+
+            map_data = map_data.rename(
+                columns={
+                    "Latitude": "lat",
+                    "Longitude": "lon"
+                }
+            )
+
+            if not map_data.empty:
+
+                st.map(
+                    map_data
+                )
+
+            else:
+
+                st.info(
+                    "No map coordinates are "
+                    "available for these stations."
+                )
         # Create results table
         st.subheader(
             "Fuel Prices"
